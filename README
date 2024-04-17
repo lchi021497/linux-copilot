@@ -1,0 +1,44 @@
+Linux Copilot
+---
+Learning Linux commands can be a daunting text. This project leverages the power of LLMs to
+alleviate the burden of learning by providing assitance in the terminanl to ask about Linux
+commands.
+
+SFT
+The model used was Llama2 with supervised finetuning on the linux man pages. Orginally,
+I thought about parsing the man pages, but it turns out the projects 
+https://github.com/idank/explainshell has already done the hard part already. So, I
+wrote a dump.py file that extracts basic question answer pairs from the extracted database.
+In order to produce the training data, use the following steps:
+
+1. copy dump.py into the directory explainshell/explainshell directory
+2. export the PYTHONPATH to the explain shell repo: /Users/<User>/projects/explainshell
+3. cd into the explainshell subdirectory and run the script with python *2.7* since the repo
+    was written in python 2.7. Wait.. then it should produce three .pkl files containing the
+    training data.
+
+description.pkl: contains question-answer pair of the form: e.g. 
+  Q: "What does command ls do?" A: list directory contents
+rev_description.pkl: contains question-answer pair of the form: e.g. 
+  Q: "What command list directory contents?" A: ls
+options.pkl:
+  Q: "What does the option -a of command ls do? A: The option -a of command ls does the following: do not ignore entries starting with .
+
+
+DEMO
+To run the repo:
+1. set the environment variable huggingface_token to your huggingface token.
+2. install requirements.txt 
+3. run `python3 shell.py`
+
+EXEC MODE (default)
+you can execute your commands in this mode
+
+ASK MODE
+you can ask the LLM questions in this mode
+
+to switch between modes type `ask` in exec mode or `exec` in ask mode. 
+
+TODO list:
+1. accelerate inference speed by using a simpler model?
+2. use projects like llamafile to make the application easier to deploy on other platforms and infer on CPUs.
