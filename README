@@ -39,6 +39,10 @@ you can ask the LLM questions in this mode
 
 to switch between modes type `ask` in exec mode or `exec` in ask mode. 
 
+Here are some examples:
+![alt text](images/demo1.png)
+![alt text](images/demo2.png)
+
 TODO list:
 1. accelerate inference speed by using a simpler model?
 2. use projects like llamafile to make the application easier to deploy on other platforms and infer on CPUs.
