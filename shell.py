@@ -1,10 +1,17 @@
 import os
 import subprocess
-from infer import infer_model, infer_pipe
+import requests
+import json
 from common import format_test_example, extract_result
 
 ASK_MODE = 0
 EXEC_MODE = 1
+
+USE_LLAMA_BACKEND=False
+
+# fall back to use huggingface inference pipeline
+if not USE_LLAMA_BACKEND:
+    from infer import infer_model, infer_pipe
 
 def main():
     mode = EXEC_MODE 
@@ -26,9 +33,16 @@ def main():
             continue
         
         if mode == ASK_MODE:
-            # prompt LLM for command info
-            result = infer_pipe(format_test_example(input_text))
-            print(extract_result(result[0]["generated_text"]))
+            # call llama-server backend
+            if USE_LLAMA_BACKEND:
+                # prompt LLM for command info
+                input_prompt = {'prompt': format_test_example(input_text)}
+                resp = requests.post('http://localhost:8080/completion', headers={'Content-Type':'application/json'}, data=json.dumps(input_prompt))
+                print('> ', resp.json()['content'])
+            else:
+                # use hugginface inference pipeline
+                result = infer_pipe(format_test_example(input_text))
+                print(extract_result(result[0]["generated_text"]))
         else:
             # execute command in a subshell
             p = subprocess.Popen(input_text, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, universal_newlines=True)
